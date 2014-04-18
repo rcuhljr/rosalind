@@ -23,6 +23,16 @@ class MacroMolecule
     paired_nucleotides(other_sequence).select {|pair| mutation?(pair) }.length
   end
 
+  def motif_locations sub_sequence
+    validate_dna sub_sequence
+    result = []
+    i = -1
+    while i = @sequence.index(sub_sequence, i+1) do 
+      result << i+1
+    end
+    result
+  end
+
   def to_s
     @sequence
   end
