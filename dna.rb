@@ -83,8 +83,7 @@ class DNA < MacroMolecule
   private
   def build_reverse_compliment
     reversed = @sequence.reverse
-    reversed.chars.each_with_index {|char, index| reversed[index] = @@compliments[char] }
-    reversed
+    reversed = reversed.chars.map {|char| @@compliments[char] }.join()
   end
 end
 
