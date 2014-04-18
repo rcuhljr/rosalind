@@ -17,6 +17,10 @@ class MacroMolecule
     @dna_count ||= dna_count
   end
 
+  def to_s
+    @sequence
+  end
+
   private
   def dna_count     
     @@symbols.each_with_object({}) {|acid, counts| counts[acid] = count acid }    
