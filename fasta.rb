@@ -1,6 +1,5 @@
 class FASTA
-
-	def load_file file_name
+  def load_file file_name
 		@data = {}
 		@current_id = ""
 		File.foreach(file_name) do |line|
@@ -17,5 +16,4 @@ class FASTA
 			@data[@current_id] << line
 		end
 	end
-
 end
