@@ -1,5 +1,5 @@
 class MacroMolecule
-  @@symbols = ['A', 'G', 'C']  
+  @@symbols = ['A', 'G', 'C']    
 
   def initialize sequence
     raise ArgumentError.new "Sequence contains non DNA symbols." if illegal_characters? sequence
@@ -34,9 +34,21 @@ end
 
 class DNA < MacroMolecule
   @@symbols = @@symbols | ['T']
+  @@compliments = {'A'=> 'T', 'T'=> 'A', 'C'=>'G', 'G'=> 'C'}
 
   def transcribe
     RNA.new(@sequence.gsub(/T/, 'U'))
+  end
+
+  def reverse_compliment
+    @rev_compliment ||= build_reverse_compliment
+  end
+
+  private
+  def build_reverse_compliment
+    reversed = @sequence.reverse
+    reversed.chars.each_with_index {|char, index| reversed[index] = @@compliments[char] }
+    reversed
   end
 end
 
