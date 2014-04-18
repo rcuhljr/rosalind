@@ -2,19 +2,25 @@ class MacroMolecule
   @@symbols = ['A', 'G', 'C']    
 
   def initialize sequence
-    raise ArgumentError.new "Sequence contains non DNA symbols." if illegal_characters? sequence
+    validate_dna sequence
 
     @sequence = sequence    
   end
 
   def count nucleotide
-    raise ArgumentError.new "Unrecognized Nucleotide: #{nucleotide}" unless @@symbols.include? nucleotide
+    validate_nucleotide nucleotide
 
     @sequence.count(nucleotide)
   end
 
   def nucleotide_counts
     @dna_count ||= dna_count
+  end
+
+  def hamming_distance other_sequence
+    validate_dna other_sequence
+
+    paired_nucleotides(other_sequence).select {|pair| mutation?(pair) }.length
   end
 
   def to_s
@@ -24,6 +30,22 @@ class MacroMolecule
   private
   def dna_count     
     @@symbols.each_with_object({}) {|acid, counts| counts[acid] = count acid }    
+  end
+
+  def paired_nucleotides other_sequence
+    other_sequence.chars.zip(@sequence.chars).take_while {|pair| !pair.include?(nil) }
+  end
+
+  def mutation? pair
+    pair[0] != pair[1]
+  end
+
+  def validate_nucleotide nucleotide
+    raise ArgumentError.new "Unrecognized Nucleotide: #{nucleotide}" unless @@symbols.include? nucleotide
+  end
+
+  def validate_dna sequence
+    raise ArgumentError.new "Sequence contains non DNA symbols. #{sequence.gsub(/[#{@@symbols.join}]/,'')}" if illegal_characters? sequence
   end  
 
   def illegal_characters? sequence
