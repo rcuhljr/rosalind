@@ -33,6 +33,10 @@ class MacroMolecule
     result
   end
 
+  def gc_content
+    @gc_content ||= (nucleotide_counts['G'] + nucleotide_counts['C']) / @sequence.length.to_f
+  end
+
   def to_s
     @sequence
   end
