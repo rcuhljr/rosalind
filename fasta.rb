@@ -8,6 +8,16 @@ class FASTA
     @data
   end
 
+  def load_string string
+    @data = {}
+    @current_id = ""
+    string.chomp.split(/\n/).each do | line |
+      process_line line.chomp
+    end
+    @data
+  end
+
+
   def process_line line
     if line =~ /^>(.*)/ then
       @current_id = $1
