@@ -80,6 +80,10 @@ class DNA < MacroMolecule
     @rev_compliment ||= build_reverse_compliment
   end
 
+  def reverese_transcribe
+    RNA.new(reverse_compliment.gsub(/T/, 'U'))
+  end
+
   private
   def build_reverse_compliment
     reversed = @sequence.reverse
@@ -97,6 +101,10 @@ class RNA < MacroMolecule
     @sequence.scan(/.{3}/).map{|item| @@codon_map[item]}.join()
   end
 
+  def candidate_proteins
+    collect_orfs.map{|orf| orf.map{|codon| @@codon_map[codon]}.join }
+  end
+
   def self.possible_rna_mod protein, modulo
     counts = protein.chars.map{|prot| @@protein_counts[prot]}
     #Stop codons
@@ -106,6 +114,25 @@ class RNA < MacroMolecule
 
   def self.protein_weight protein_string
     protein_string.chars.inject(0) { |weight, protein| weight + @@protein_weights[protein]}
+  end
+
+  private
+
+  def collect_orfs
+    valid_reads = []
+    offset_codons = [@sequence.scan(/.{3}/), @sequence[1..-1].scan(/.{3}/), @sequence[2..-1].scan(/.{3}/)]
+    offset_codons.each do |codon_set| 
+      get_valid_pairs(codon_set).each do |pair|
+        valid_reads << codon_set[pair[0]..(pair[1]-1)]
+      end
+    end
+    valid_reads
+  end
+
+  def get_valid_pairs codon_set
+      starts = codon_set.each_index.select {|i| codon_set[i] == 'AUG'}
+      stops = codon_set.each_index.select {|i| codon_set[i] =~ /UAA|UAG|UGA/}      
+      starts.map{ |start| [start, stops.select{ |stop| stop > start }.min] }.select{ |_,y| y }
   end
 end
   
