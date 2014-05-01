@@ -1,3 +1,5 @@
+require 'set'
+
 class MacroMolecule
   @@symbols = ['A', 'G', 'C']    
 
@@ -39,6 +41,20 @@ class MacroMolecule
 
   def to_s
     @sequence
+  end
+
+  def self.longest_common_substring sequence_collection    
+    aSet = Set.new()
+    seq = sequence_collection.first
+    (0..seq.size).each{|x| (x..seq.size).each{ |y| aSet.add seq[x..y] }}                  
+    aSet.sort{|x,y| y.size <=> x.size}.each do |subs|               
+      index = 0      
+      while sequence_collection[index] =~ /#{subs}/
+        index += 1
+      end
+      return subs if index == sequence_collection.size
+    end
+    ""
   end
 
   private
