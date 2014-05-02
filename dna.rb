@@ -100,6 +100,16 @@ class DNA < MacroMolecule
     RNA.new(reverse_compliment.gsub(/T/, 'U'))
   end
 
+  def reverse_palindromes
+    palindromes = []
+    (4..12).each do |length|
+      (0..@sequence.size-(length)).each do |offset|
+        palindromes << [offset+1, length] if @sequence[offset..(offset+length-1)] == reverse_compliment[(-1*offset-length)..(-1*offset-1)]
+      end
+    end
+    palindromes
+  end
+
   private
   def build_reverse_compliment
     reversed = @sequence.reverse
