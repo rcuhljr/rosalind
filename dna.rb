@@ -87,6 +87,13 @@ end
 class DNA < MacroMolecule
   @@symbols = @@symbols | ['T']
   @@compliments = {'A'=> 'T', 'T'=> 'A', 'C'=>'G', 'G'=> 'C'}
+  @@trans_trans_map = Hash.new(false) 
+  @@trans_trans_map[["A","G"]] = true
+  @@trans_trans_map[["G","A"]] = true
+  @@trans_trans_map[["C","T"]] = true
+  @@trans_trans_map[["T","C"]] = true
+
+
 
   def transcribe
     RNA.new(@sequence.gsub(/T/, 'U'))
@@ -108,6 +115,19 @@ class DNA < MacroMolecule
       end
     end
     palindromes
+  end
+
+  def transition_tranversion_ratio other_sequence
+    transitions, transversions = [0,0]
+    @sequence.chars.zip(other_sequence.chars).map do |pair|
+      next if pair[0] == pair[1]
+      if @@trans_trans_map[pair]
+        transitions += 1
+      else
+        transversions += 1
+      end
+    end
+    transitions.to_f/transversions
   end
 
   private
