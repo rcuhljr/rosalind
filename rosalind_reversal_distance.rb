@@ -8,20 +8,32 @@ File.open('results.txt', "w") do |output|
     altered = datum.rotate!.pop.split.map(&:to_i)
     datum.rotate!.pop #buffer space
 
-    reversals = 0
-    puts "#{goal}"
-    goal.reverse.each do |item| 
-      puts "#{altered}"
-      target = goal.index(item)
-      distance = altered.index(item)
-      reversals += 1 if target != distance
-      puts "reversals: #{reversals}"
-      puts "#{target}: #{distance}"
-      before = altered[0..[distance-1,0].max]
-      swap = altered[distance..target]
-      after = altered[target+1..goal.size]
-      puts "#{before}:#{swap}:#{after}"
-      altered =  before + swap.reverse + after
+    reversals = 0    
+    candidates = [altered.clone]
+    visited = Hash.new(false)
+    visited[candidates.first] = true
+    best_hamming = goal.zip(altered).select {|pair| pair[0] != pair[1] }.length
+    while !candidates.index(goal) do
+      new_candidates = []
+      replacement_hamming = best_hamming      
+      candidates.each do |candidate|        
+        (0..8).each do |start| 
+          (start+1..9).each do |endrange|
+            before = candidate[0,start]
+            swap = candidate[start..endrange]
+            after = candidate[endrange+1..10]        
+            possible = before+swap.reverse+after
+            next if visited[possible]
+            visited[possible] = true
+            local_ham = goal.zip(possible).select {|pair| pair[0] != pair[1] }.length
+            new_candidates.push possible if best_hamming+1 >= local_ham            
+            replacement_hamming = [replacement_hamming, local_ham].min
+          end
+        end        
+      end
+      reversals += 1        
+      candidates = new_candidates
+      best_hamming = replacement_hamming
     end
     results.push(reversals)
   end
