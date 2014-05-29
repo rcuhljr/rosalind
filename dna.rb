@@ -19,6 +19,10 @@ class MacroMolecule
     @dna_count ||= dna_count
   end
 
+  def self.hamming_distance(seqA, seqB)
+    MacroMolecule.pair_nucleotides(seqA,seqB).select {|pair| mutation?(pair) }.length
+  end
+
   def hamming_distance other_sequence
     validate_dna other_sequence
 
@@ -63,10 +67,14 @@ class MacroMolecule
   end
 
   def paired_nucleotides other_sequence
-    other_sequence.chars.zip(@sequence.chars).take_while {|pair| !pair.include?(nil) }
+    MacroMolecule.pair_nucleotides(@sequence, other_sequence)    
   end
 
-  def mutation? pair
+  def self.pair_nucleotides(seqA, seqB)
+    seqB.chars.zip(seqA.chars).take_while {|pair| !pair.include?(nil) }
+  end
+
+  def self.mutation? pair
     pair[0] != pair[1]
   end
 
@@ -103,6 +111,10 @@ class DNA < MacroMolecule
     @rev_compliment ||= build_reverse_compliment
   end
 
+  def self.reverse_compliment sequence
+    DNA.build_reverse_compliment sequence
+  end
+
   def reverese_transcribe
     RNA.new(reverse_compliment.gsub(/T/, 'U'))
   end
@@ -134,6 +146,10 @@ class DNA < MacroMolecule
   def build_reverse_compliment
     reversed = @sequence.reverse
     reversed = reversed.chars.map {|char| @@compliments[char] }.join()
+  end
+
+  def self.build_reverse_compliment sequence
+    sequence.reverse.chars.map {|char| @@compliments[char] }.join()
   end
 end
 
