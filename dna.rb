@@ -185,7 +185,20 @@ class RNA < MacroMolecule
     (indexes_au.length/2).downto(1).inject(:*) * (indexes_gc.length/2).downto(1).inject(:*)
   end
 
+  def maximum_matches    
+    a_count = nucleotide_counts['A']
+    u_count = nucleotide_counts['U']
+    g_count = nucleotide_counts['G']
+    c_count = nucleotide_counts['C']
+    permutations(a_count, u_count) * permutations(g_count, c_count)
+  end
+
   private
+
+  def permutations(n,r)
+    r, n = [n,r].sort    
+    n.downto(n-r+1).inject(:*)
+  end
   
   def collect_orfs
     valid_reads = []
