@@ -74,6 +74,10 @@ class MacroMolecule
     seqB.chars.zip(seqA.chars).take_while {|pair| !pair.include?(nil) }
   end
 
+  def mutation? pair
+    DNA.mutation? pair
+  end
+
   def self.mutation? pair
     pair[0] != pair[1]
   end
