@@ -1,0 +1,1 @@
+No code for this solution, an unrooted tree always has 2 fewer internal nodes than there are edges. I just subtracted two from the number of edge nodes provided.
