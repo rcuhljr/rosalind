@@ -1,0 +1,1 @@
+No need for code, just ran 2**n%1000000 in irb.
